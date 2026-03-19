@@ -1,0 +1,149 @@
+### Variables
+@baseUrl = http://localhost:3000/api/v1
+@contentType = application/json
+
+###
+
+### Get all posts
+GET {{baseUrl}}/posts
+
+###
+
+### Create post (minimal)
+# @name createPost
+POST {{baseUrl}}/posts
+Content-Type: {{contentType}}
+
+{
+  "title": "New Post",
+  "content": "This is the content of the new post."
+}
+
+###
+
+### Create post (lengkap)
+# @name createPostFull
+POST {{baseUrl}}/posts
+Content-Type: {{contentType}}
+
+{
+  "title": "New Post Full",
+  "slug": "new-post-full",
+  "content": "This is the content of the new post.",
+  "excerpt": "Short description of the post.",
+  "status": "DRAFT",
+  "featuredImageId": 1,
+  "categoryIds": [1, 2]
+}
+
+###
+
+### Get post by id
+@postId = {{createPost.response.body.data.id}}
+GET {{baseUrl}}/posts/{{postId}}
+
+###
+
+### Update post — judul dan konten
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Updated Post",
+  "content": "This is the updated content of the post."
+}
+
+###
+
+### Update post — pindah ke review
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "status": "REVIEW"
+}
+
+###
+
+### Update post — publish
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "status": "PUBLISHED"
+}
+
+###
+
+### Update post — archive
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "status": "ARCHIVED"
+}
+
+###
+
+### Update post — ganti kategori
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "categoryIds": [2, 3]
+}
+
+###
+
+### Update post — hapus featured image
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "featuredImageId": null
+}
+
+###
+
+### Delete post
+DELETE {{baseUrl}}/posts/{{postId}}
+
+###
+
+### ─── ERROR CASES ──────────────────────────
+
+### Get post — id tidak valid
+GET {{baseUrl}}/posts/abc
+
+###
+
+### Get post — tidak ditemukan
+GET {{baseUrl}}/posts/99999
+
+###
+
+### Create post — tanpa title (validasi zod)
+POST {{baseUrl}}/posts
+Content-Type: {{contentType}}
+
+{
+  "content": "No title here"
+}
+
+###
+
+### Update post — status transition tidak valid (ARCHIVED → DRAFT)
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{
+  "status": "DRAFT"
+}
+
+###
+
+### Update post — body kosong (refine zod)
+PUT {{baseUrl}}/posts/{{postId}}
+Content-Type: {{contentType}}
+
+{}
